@@ -1,0 +1,27 @@
+{
+  "team_number": "T0083",
+  "group_lead": {
+    "name": "Yatharth Soni",
+    "enrollment_no": "2501010531",
+    "github": "Yatharth-26"
+  },
+  "members": [
+    {
+      "name": "Madhav Aggarwal",
+      "enrollment_no": "2501010619",
+      "github": "rmmadhav74-boop"
+    },
+    {
+      "name": "Kavy Singhvi",
+      "enrollment_no": "2501010215",
+      "github": "ksinghvi9"
+    },
+    {
+      "name": "Aaditya Bansal",
+      "enrollment_no": "2501010617",
+      "github": "aadityabansal-001"
+    }
+  ],
+  "postgres_version": "18.6",
+  "laptop_used_for_benchmarks": "macbook pro m4"
+}
