@@ -1,0 +1,101 @@
+erDiagram
+    CITIES ||--o{ SELLERS : hosts
+    CITIES ||--o{ CUSTOMERS : lives_in
+    CITIES ||--o{ ADDRESSES : locates
+    CATEGORIES o|--o{ CATEGORIES : parent_of
+    CATEGORIES ||--o{ PRODUCTS : classifies
+    SELLERS ||--o{ PRODUCTS : lists
+    CUSTOMERS ||--o{ ADDRESSES : saves
+    CUSTOMERS ||--o{ ORDERS : places
+    ADDRESSES o|--o{ ORDERS : ships_to
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ ORDER_ITEMS : appears_on
+    SELLERS ||--o{ ORDER_ITEMS : fulfils
+    ORDER_ITEMS ||--o| RETURNS : may_have
+    PRODUCTS ||--o{ PRODUCT_REVIEWS : receives
+    CUSTOMERS ||--o{ PRODUCT_REVIEWS : writes
+    CUSTOMERS ||--o{ CART_ITEMS : owns
+    PRODUCTS ||--o{ CART_ITEMS : is_in
+
+    CITIES {
+        int city_id PK
+        varchar city_name UK
+        varchar state
+    }
+    CATEGORIES {
+        int category_id PK
+        varchar category_name UK
+        int parent_category_id FK
+        boolean is_digital
+    }
+    SELLERS {
+        int seller_id PK
+        varchar business_name
+        char gstin UK
+        int city_id FK
+        date joined_on
+        numeric seller_rating
+        varchar status
+    }
+    PRODUCTS {
+        int product_id PK
+        char asin UK
+        int seller_id FK
+        int category_id FK
+        varchar title
+        numeric price
+        int stock_qty
+        varchar status
+    }
+    CUSTOMERS {
+        int customer_id PK
+        varchar email UK
+        char phone UK
+        int city_id FK
+        boolean is_prime
+    }
+    ADDRESSES {
+        int address_id PK
+        int customer_id FK
+        int city_id FK
+        varchar label
+        char pincode
+        boolean is_default
+    }
+    ORDERS {
+        int order_id PK
+        int customer_id FK
+        int address_id FK
+        timestamptz ordered_at
+        numeric total_amount
+        varchar status
+    }
+    ORDER_ITEMS {
+        int order_id PK, FK
+        smallint line_no PK
+        int product_id FK
+        int seller_id FK
+        smallint quantity
+        numeric unit_price
+    }
+    RETURNS {
+        int return_id PK
+        int order_id FK
+        smallint line_no FK
+        varchar reason
+        varchar status
+        numeric refund_amount
+    }
+    PRODUCT_REVIEWS {
+        int review_id PK
+        int product_id FK
+        int customer_id FK
+        smallint rating
+        boolean verified_purchase
+    }
+    CART_ITEMS {
+        int customer_id PK, FK
+        int product_id PK, FK
+        smallint quantity
+        timestamptz added_at
+    }
