@@ -1,0 +1,81 @@
+=== R17 run 1 ===
+Hash Right Anti Join  (cost=5665.00..15821.53 rows=1 width=12) (actual time=49.464..49.796 rows=1000.00 loops=1)
+  Hash Cond: ((o.customer_id = r.customer_id) AND (oi.product_id = r.product_id))
+  Buffers: shared hit=3442
+  ->  Hash Join  (cost=4277.60..8891.62 rows=221696 width=8) (actual time=11.495..34.927 rows=221302.00 loops=1)
+        Hash Cond: (oi.order_id = o.order_id)
+        Buffers: shared hit=2976
+        ->  Seq Scan on order_items oi  (cost=0.00..3984.00 rows=240000 width=8) (actual time=0.003..5.179 rows=240000.00 loops=1)
+              Buffers: shared hit=1584
+        ->  Hash  (cost=2892.00..2892.00 rows=110848 width=8) (actual time=11.439..11.439 rows=110646.00 loops=1)
+              Buckets: 131072  Batches: 1  Memory Usage: 5347kB
+              Buffers: shared hit=1392
+              ->  Seq Scan on orders o  (cost=0.00..2892.00 rows=110848 width=8) (actual time=0.003..7.041 rows=110646.00 loops=1)
+                    Filter: ((status)::text = ANY ('{DELIVERED,RETURNED}'::text[]))
+                    Rows Removed by Filter: 9354
+                    Buffers: shared hit=1392
+  ->  Hash  (cost=852.62..852.62 rows=35652 width=12) (actual time=3.711..3.711 rows=35662.00 loops=1)
+        Buckets: 65536  Batches: 1  Memory Usage: 2045kB
+        Buffers: shared hit=466
+        ->  Seq Scan on product_reviews r  (cost=0.00..852.62 rows=35652 width=12) (actual time=0.005..2.018 rows=35662.00 loops=1)
+              Filter: verified_purchase
+              Rows Removed by Filter: 3000
+              Buffers: shared hit=466
+Planning:
+  Buffers: shared hit=312
+Planning Time: 0.545 ms
+Execution Time: 49.852 ms
+=== R17 run 2 ===
+Hash Right Anti Join  (cost=5665.00..15821.53 rows=1 width=12) (actual time=49.493..49.822 rows=1000.00 loops=1)
+  Hash Cond: ((o.customer_id = r.customer_id) AND (oi.product_id = r.product_id))
+  Buffers: shared hit=3442
+  ->  Hash Join  (cost=4277.60..8891.62 rows=221696 width=8) (actual time=11.762..35.358 rows=221302.00 loops=1)
+        Hash Cond: (oi.order_id = o.order_id)
+        Buffers: shared hit=2976
+        ->  Seq Scan on order_items oi  (cost=0.00..3984.00 rows=240000 width=8) (actual time=0.002..5.260 rows=240000.00 loops=1)
+              Buffers: shared hit=1584
+        ->  Hash  (cost=2892.00..2892.00 rows=110848 width=8) (actual time=11.705..11.705 rows=110646.00 loops=1)
+              Buckets: 131072  Batches: 1  Memory Usage: 5347kB
+              Buffers: shared hit=1392
+              ->  Seq Scan on orders o  (cost=0.00..2892.00 rows=110848 width=8) (actual time=0.003..7.123 rows=110646.00 loops=1)
+                    Filter: ((status)::text = ANY ('{DELIVERED,RETURNED}'::text[]))
+                    Rows Removed by Filter: 9354
+                    Buffers: shared hit=1392
+  ->  Hash  (cost=852.62..852.62 rows=35652 width=12) (actual time=3.409..3.410 rows=35662.00 loops=1)
+        Buckets: 65536  Batches: 1  Memory Usage: 2045kB
+        Buffers: shared hit=466
+        ->  Seq Scan on product_reviews r  (cost=0.00..852.62 rows=35652 width=12) (actual time=0.005..1.859 rows=35662.00 loops=1)
+              Filter: verified_purchase
+              Rows Removed by Filter: 3000
+              Buffers: shared hit=466
+Planning:
+  Buffers: shared hit=312
+Planning Time: 0.505 ms
+Execution Time: 49.873 ms
+=== R17 run 3 ===
+Hash Right Anti Join  (cost=5665.00..15821.53 rows=1 width=12) (actual time=49.329..49.660 rows=1000.00 loops=1)
+  Hash Cond: ((o.customer_id = r.customer_id) AND (oi.product_id = r.product_id))
+  Buffers: shared hit=3442
+  ->  Hash Join  (cost=4277.60..8891.62 rows=221696 width=8) (actual time=11.361..34.837 rows=221302.00 loops=1)
+        Hash Cond: (oi.order_id = o.order_id)
+        Buffers: shared hit=2976
+        ->  Seq Scan on order_items oi  (cost=0.00..3984.00 rows=240000 width=8) (actual time=0.003..5.182 rows=240000.00 loops=1)
+              Buffers: shared hit=1584
+        ->  Hash  (cost=2892.00..2892.00 rows=110848 width=8) (actual time=11.297..11.297 rows=110646.00 loops=1)
+              Buckets: 131072  Batches: 1  Memory Usage: 5347kB
+              Buffers: shared hit=1392
+              ->  Seq Scan on orders o  (cost=0.00..2892.00 rows=110848 width=8) (actual time=0.003..7.023 rows=110646.00 loops=1)
+                    Filter: ((status)::text = ANY ('{DELIVERED,RETURNED}'::text[]))
+                    Rows Removed by Filter: 9354
+                    Buffers: shared hit=1392
+  ->  Hash  (cost=852.62..852.62 rows=35652 width=12) (actual time=3.665..3.665 rows=35662.00 loops=1)
+        Buckets: 65536  Batches: 1  Memory Usage: 2045kB
+        Buffers: shared hit=466
+        ->  Seq Scan on product_reviews r  (cost=0.00..852.62 rows=35652 width=12) (actual time=0.004..1.995 rows=35662.00 loops=1)
+              Filter: verified_purchase
+              Rows Removed by Filter: 3000
+              Buffers: shared hit=466
+Planning:
+  Buffers: shared hit=312
+Planning Time: 0.516 ms
+Execution Time: 49.714 ms

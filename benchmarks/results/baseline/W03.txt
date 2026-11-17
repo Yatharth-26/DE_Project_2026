@@ -1,0 +1,57 @@
+=== W03 run 1 ===
+Update on products p  (cost=0.29..600.97 rows=0 width=0) (actual time=0.406..0.406 rows=0.00 loops=1)
+  Buffers: shared hit=129
+  ->  Nested Loop  (cost=0.29..600.97 rows=1 width=28) (actual time=0.067..0.334 rows=1.00 loops=1)
+        Join Filter: (c.category_id = p.category_id)
+        Rows Removed by Join Filter: 19
+        Buffers: shared hit=91
+        ->  Seq Scan on categories c  (cost=0.00..1.50 rows=1 width=10) (actual time=0.003..0.004 rows=1.00 loops=1)
+              Filter: ((category_name)::text = 'Watches'::text)
+              Rows Removed by Filter: 39
+              Buffers: shared hit=1
+        ->  Index Scan using uq_product_seller_pair on products p  (cost=0.29..599.21 rows=20 width=15) (actual time=0.062..0.327 rows=20.00 loops=1)
+              Index Cond: (seller_id = 217)
+              Index Searches: 1
+              Buffers: shared hit=90
+Planning:
+  Buffers: shared hit=254
+Planning Time: 0.384 ms
+Execution Time: 0.456 ms
+=== W03 run 2 ===
+Update on products p  (cost=0.29..600.97 rows=0 width=0) (actual time=0.393..0.393 rows=0.00 loops=1)
+  Buffers: shared hit=126
+  ->  Nested Loop  (cost=0.29..600.97 rows=1 width=28) (actual time=0.074..0.326 rows=1.00 loops=1)
+        Join Filter: (c.category_id = p.category_id)
+        Rows Removed by Join Filter: 19
+        Buffers: shared hit=88
+        ->  Seq Scan on categories c  (cost=0.00..1.50 rows=1 width=10) (actual time=0.003..0.004 rows=1.00 loops=1)
+              Filter: ((category_name)::text = 'Watches'::text)
+              Rows Removed by Filter: 39
+              Buffers: shared hit=1
+        ->  Index Scan using uq_product_seller_pair on products p  (cost=0.29..599.21 rows=20 width=15) (actual time=0.068..0.319 rows=20.00 loops=1)
+              Index Cond: (seller_id = 217)
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=254
+Planning Time: 0.350 ms
+Execution Time: 0.443 ms
+=== W03 run 3 ===
+Update on products p  (cost=0.29..600.97 rows=0 width=0) (actual time=0.386..0.386 rows=0.00 loops=1)
+  Buffers: shared hit=126
+  ->  Nested Loop  (cost=0.29..600.97 rows=1 width=28) (actual time=0.071..0.319 rows=1.00 loops=1)
+        Join Filter: (c.category_id = p.category_id)
+        Rows Removed by Join Filter: 19
+        Buffers: shared hit=88
+        ->  Seq Scan on categories c  (cost=0.00..1.50 rows=1 width=10) (actual time=0.003..0.004 rows=1.00 loops=1)
+              Filter: ((category_name)::text = 'Watches'::text)
+              Rows Removed by Filter: 39
+              Buffers: shared hit=1
+        ->  Index Scan using uq_product_seller_pair on products p  (cost=0.29..599.21 rows=20 width=15) (actual time=0.066..0.312 rows=20.00 loops=1)
+              Index Cond: (seller_id = 217)
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=254
+Planning Time: 0.346 ms
+Execution Time: 0.433 ms
