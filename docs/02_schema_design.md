@@ -1,432 +1,178 @@
-# Schema Design – Amazon Online Shopping Database
+# CP1 schema design
 
-## 1. Overview
+## Scope and implementation
 
-The database is designed to support an Amazon-like online shopping platform. It stores information about customers, sellers, products, categories, addresses, orders, shopping carts, reviews, and returns.
+The schema is `amazon`; both SQL scripts begin by selecting that schema. `sql/01_schema.sql` is intentionally limited to tables and integrity constraints. Apart from indexes PostgreSQL creates for primary and unique keys, the sole explicit index is `uq_addresses_one_default_per_customer`, a partial **unique integrity index** needed to enforce the cross-row rule of one default address; it is not a query-performance index.
 
-The database uses a relational model and is implemented in PostgreSQL under the `amazon` schema.
+`sql/02_load_data.sql` uses psql's `\copy` (so paths are relative to the repository root), loads referenced rows before referencing rows, and ends with `ANALYZE;`. The source is a snapshot: checks deliberately validate local facts but do not impose time-dependent business policy such as “an inactive product can never be in a historical order.”
 
-**Total tables:** 11  
-**Total records loaded:** 565,614
+## Data dictionary
 
-The schema uses primary keys, foreign keys, unique constraints, NOT NULL constraints, and CHECK constraints to maintain data integrity.
+`PK`, `FK`, and `UK` below name key roles. `NN` means `NOT NULL`; all checks named `chk_*` are in [01_schema.sql](../sql/01_schema.sql).
 
----
-
-## 2. Table Design and Data Dictionary
-
-### 2.1 cities
-
-Stores city and state information used by customers, sellers, and addresses.
-
-| Column | Data Type | Constraints | Description |
+| Table | Column (type) | Constraints | Rationale |
 |---|---|---|---|
-| city_id | INTEGER | PK, NOT NULL | Unique city identifier |
-| city_name | VARCHAR(100) | UNIQUE, NOT NULL | Name of the city |
-| state | VARCHAR(100) | NOT NULL | State containing the city |
-
-### 2.2 categories
-
-Stores product categories and their hierarchical relationships.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| category_id | INTEGER | PK, NOT NULL | Unique category identifier |
-| category_name | VARCHAR(100) | UNIQUE, NOT NULL | Category name |
-| parent_category_id | INTEGER | FK, NULL allowed | Parent category |
-| is_digital | BOOLEAN | NOT NULL | Indicates whether the category contains digital products |
-
-A category can have a parent category, allowing hierarchical category organization. A category cannot be its own parent.
-
-### 2.3 customers
-
-Stores customer account and membership information.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| customer_id | INTEGER | PK, NOT NULL | Unique customer identifier |
-| full_name | VARCHAR(150) | NOT NULL | Customer's full name |
-| email | VARCHAR(255) | UNIQUE, NOT NULL | Customer email |
-| phone | VARCHAR(20) | UNIQUE, NOT NULL | Customer phone number |
-| city_id | INTEGER | FK, NOT NULL | Customer's city |
-| signup_date | DATE | NOT NULL | Account registration date |
-| is_prime | BOOLEAN | NOT NULL | Prime membership status |
-| prime_since | DATE | NULL allowed | Date Prime membership started |
-
-Prime membership rules:
-- A Prime customer must have a `prime_since` date.
-- A non-Prime customer must have `prime_since` as NULL.
-- The Prime membership date cannot be earlier than the signup date.
-
-### 2.4 sellers
-
-Stores marketplace seller information.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| seller_id | INTEGER | PK, NOT NULL | Unique seller identifier |
-| business_name | VARCHAR(200) | NOT NULL | Seller business name |
-| gstin | VARCHAR(15) | UNIQUE, NOT NULL | Seller GST identification number |
-| city_id | INTEGER | FK, NOT NULL | Seller's city |
-| joined_on | DATE | NOT NULL | Date seller joined |
-| seller_rating | NUMERIC(2,1) | NOT NULL | Seller rating |
-| status | VARCHAR(20) | NOT NULL | Seller account status |
-
-Allowed seller statuses: `ACTIVE`, `SUSPENDED`, `CLOSED`.
-
-The GSTIN must contain exactly 15 characters, and seller ratings must be between 0 and 5.
-
-### 2.5 addresses
-
-Stores customer delivery addresses.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| address_id | INTEGER | PK, NOT NULL | Unique address identifier |
-| customer_id | INTEGER | FK, NOT NULL | Customer who owns the address |
-| label | VARCHAR(20) | NOT NULL | Address type |
-| line1 | VARCHAR(255) | NOT NULL | Address details |
-| city_id | INTEGER | FK, NOT NULL | Address city |
-| pincode | VARCHAR(10) | NOT NULL | Postal code |
-| is_default | BOOLEAN | NOT NULL | Whether this is the customer's default address |
-
-Allowed address labels: `HOME`, `WORK`.
-
-The combination `(address_id, customer_id)` is also declared UNIQUE so that an order can reference an address belonging to the same customer.
-
-### 2.6 products
-
-Stores product catalogue and inventory information.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| product_id | INTEGER | PK, NOT NULL | Unique product identifier |
-| asin | VARCHAR(20) | UNIQUE, NOT NULL | Amazon Standard Identification Number |
-| seller_id | INTEGER | FK, NOT NULL | Seller offering the product |
-| category_id | INTEGER | FK, NOT NULL | Product category |
-| title | VARCHAR(255) | NOT NULL | Product title |
-| brand | VARCHAR(100) | NOT NULL | Product brand |
-| mrp | NUMERIC(12,2) | NOT NULL | Maximum retail price |
-| price | NUMERIC(12,2) | NOT NULL | Selling price |
-| stock_qty | INTEGER | NOT NULL | Available stock |
-| is_prime_eligible | BOOLEAN | NOT NULL | Prime eligibility |
-| avg_rating | NUMERIC(2,1) | NULL allowed | Average product rating |
-| review_count | INTEGER | NOT NULL | Number of reviews |
-| listed_on | DATE | NOT NULL | Product listing date |
-| status | VARCHAR(20) | NOT NULL | Product status |
-
-Business rules:
-- Selling price must be greater than zero.
-- MRP must be greater than or equal to selling price.
-- Stock quantity cannot be negative.
-- Average rating must be between 1 and 5 when present.
-- Review count cannot be negative.
-- A product with zero reviews must have a NULL average rating.
-- Allowed product statuses: `ACTIVE`, `INACTIVE`, `OUT_OF_STOCK`.
-
-The pair `(product_id, seller_id)` is declared UNIQUE to support the composite foreign key from `order_items`.
-
-### 2.7 orders
-
-Stores customer order and payment information.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| order_id | INTEGER | PK, NOT NULL | Unique order identifier |
-| customer_id | INTEGER | FK, NOT NULL | Customer who placed the order |
-| address_id | INTEGER | Composite FK, NULL allowed | Delivery address |
-| ordered_at | TIMESTAMPTZ | NOT NULL | Order placement timestamp |
-| payment_method | VARCHAR(30) | NOT NULL | Payment method |
-| total_amount | NUMERIC(12,2) | NOT NULL | Order total |
-| status | VARCHAR(30) | NOT NULL | Current order status |
-| shipped_at | TIMESTAMPTZ | NULL allowed | Shipping timestamp |
-| delivered_at | TIMESTAMPTZ | NULL allowed | Delivery timestamp |
-
-Allowed payment methods: `CARD`, `COD`, `EMI`, `GIFT_CARD`, `NETBANKING`, `UPI`.
-
-Allowed order statuses: `PLACED`, `PACKED`, `SHIPPED`, `OUT_FOR_DELIVERY`, `DELIVERED`, `CANCELLED`, `RETURNED`.
-
-The composite foreign key `(address_id, customer_id)` ensures that a non-NULL delivery address belongs to the customer placing the order.
-
-An address may be NULL for orders containing digital products.
-
-Shipping and delivery timestamps cannot be earlier than the order placement timestamp.
-
-### 2.8 order_items
-
-Stores individual product lines within customer orders.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| order_id | INTEGER | Composite PK, FK, NOT NULL | Associated order |
-| line_no | SMALLINT | Composite PK, NOT NULL | Line number within the order |
-| product_id | INTEGER | FK, NOT NULL | Ordered product |
-| seller_id | INTEGER | Composite FK, NOT NULL | Seller of the product |
-| quantity | SMALLINT | NOT NULL | Ordered quantity |
-| unit_price | NUMERIC(12,2) | NOT NULL | Price per unit at purchase time |
-
-The composite primary key `(order_id, line_no)` uniquely identifies each order line.
-
-The composite foreign key `(product_id, seller_id)` ensures that the seller recorded on the order line matches the seller associated with the product.
-
-Quantity, line number, and unit price must be positive.
-
-### 2.9 cart_items
-
-Stores products currently present in customer shopping carts.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| customer_id | INTEGER | Composite PK, FK, NOT NULL | Customer owning the cart item |
-| product_id | INTEGER | Composite PK, FK, NOT NULL | Product added to cart |
-| quantity | SMALLINT | NOT NULL | Quantity selected |
-| added_at | TIMESTAMPTZ | NOT NULL | Time item was added |
-
-The composite primary key `(customer_id, product_id)` prevents the same product from appearing as multiple separate entries for the same customer.
-
-Quantity must be greater than zero.
-
-### 2.10 product_reviews
-
-Stores customer reviews and ratings for products.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| review_id | INTEGER | PK, NOT NULL | Unique review identifier |
-| product_id | INTEGER | FK, NOT NULL | Reviewed product |
-| customer_id | INTEGER | FK, NOT NULL | Customer who submitted review |
-| rating | SMALLINT | NOT NULL | Rating from 1 to 5 |
-| title | VARCHAR(255) | NOT NULL | Review title |
-| body | TEXT | NULL allowed | Review description |
-| verified_purchase | BOOLEAN | NOT NULL | Whether purchase was verified |
-| helpful_votes | INTEGER | NOT NULL | Number of helpful votes |
-| created_at | TIMESTAMPTZ | NOT NULL | Review creation timestamp |
-
-Rating must be between 1 and 5. Helpful votes cannot be negative.
-
-### 2.11 returns
-
-Stores product return requests associated with order lines.
-
-| Column | Data Type | Constraints | Description |
-|---|---|---|---|
-| return_id | INTEGER | PK, NOT NULL | Unique return identifier |
-| order_id | INTEGER | Composite FK, NOT NULL | Original order |
-| line_no | SMALLINT | Composite FK, NOT NULL | Returned order line |
-| reason | VARCHAR(40) | NOT NULL | Reason for return |
-| requested_at | TIMESTAMPTZ | NOT NULL | Return request timestamp |
-| status | VARCHAR(20) | NOT NULL | Return status |
-| refund_amount | NUMERIC(12,2) | NULL allowed | Refund amount |
-
-Allowed return reasons: `QUALITY_ISSUE`, `WRONG_ITEM`, `DAMAGED`, `SIZE_ISSUE`, `NOT_AS_DESCRIBED`, `NO_LONGER_NEEDED`.
-
-Allowed return statuses: `REQUESTED`, `PICKED_UP`, `REFUNDED`, `REJECTED`.
-
-A refunded return must have a positive refund amount. Other return statuses must have a NULL refund amount.
-
----
-
-## 3. Primary Keys and Foreign Keys
-
-### Primary Keys
-
-| Table | Primary Key |
-|---|---|
-| cities | city_id |
-| categories | category_id |
-| customers | customer_id |
-| sellers | seller_id |
-| addresses | address_id |
-| products | product_id |
-| orders | order_id |
-| order_items | (order_id, line_no) |
-| cart_items | (customer_id, product_id) |
-| product_reviews | review_id |
-| returns | return_id |
-
-### Foreign Key Relationships
-
-| Child Table | Foreign Key | Referenced Table |
-|---|---|---|
-| categories | parent_category_id | categories(category_id) |
-| customers | city_id | cities(city_id) |
-| sellers | city_id | cities(city_id) |
-| addresses | customer_id | customers(customer_id) |
-| addresses | city_id | cities(city_id) |
-| products | seller_id | sellers(seller_id) |
-| products | category_id | categories(category_id) |
-| orders | customer_id | customers(customer_id) |
-| orders | (address_id, customer_id) | addresses(address_id, customer_id) |
-| order_items | order_id | orders(order_id) |
-| order_items | (product_id, seller_id) | products(product_id, seller_id) |
-| cart_items | customer_id | customers(customer_id) |
-| cart_items | product_id | products(product_id) |
-| product_reviews | product_id | products(product_id) |
-| product_reviews | customer_id | customers(customer_id) |
-| returns | (order_id, line_no) | order_items(order_id, line_no) |
-
-Foreign keys use `ON DELETE RESTRICT` to prevent deletion of parent records that are referenced by dependent records.
-
----
-
-## 4. Entity Relationship Diagram
-
-The main relationships are:
-
-- One city can be associated with many customers, sellers, and addresses.
-- One category can contain many products.
-- A category can have a parent category.
-- One customer can have multiple addresses, orders, cart items, and reviews.
-- One seller can list multiple products.
-- One product can appear in multiple order items, cart items, and reviews.
-- One order can contain multiple order items.
-- One order item can be associated with return records.
-- Each order belongs to one customer.
-- Each non-NULL order address must belong to the same customer as the order.
-
-### Mermaid ER Diagram Source
-
-```mermaid
-erDiagram
-    CITIES ||--o{ CUSTOMERS : lives_in
-    CITIES ||--o{ SELLERS : located_in
-    CITIES ||--o{ ADDRESSES : located_in
-
-    CATEGORIES ||--o{ CATEGORIES : parent_of
-    CATEGORIES ||--o{ PRODUCTS : contains
-
-    CUSTOMERS ||--o{ ADDRESSES : owns
-    CUSTOMERS ||--o{ ORDERS : places
-    CUSTOMERS ||--o{ CART_ITEMS : has
-    CUSTOMERS ||--o{ PRODUCT_REVIEWS : writes
-
-    SELLERS ||--o{ PRODUCTS : lists
-
-    ADDRESSES o|--o{ ORDERS : used_for
-
-    ORDERS ||--|{ ORDER_ITEMS : contains
-
-    PRODUCTS ||--o{ ORDER_ITEMS : ordered_as
-    PRODUCTS ||--o{ CART_ITEMS : added_to_cart
-    PRODUCTS ||--o{ PRODUCT_REVIEWS : receives
-
-    ORDER_ITEMS ||--o{ RETURNS : returned_through
-
-    CITIES {
-        int city_id PK
-        varchar city_name UK
-        varchar state
-    }
-
-    CATEGORIES {
-        int category_id PK
-        varchar category_name UK
-        int parent_category_id FK
-        boolean is_digital
-    }
-
-    CUSTOMERS {
-        int customer_id PK
-        varchar email UK
-        varchar phone UK
-        int city_id FK
-        boolean is_prime
-        date prime_since
-    }
-
-    SELLERS {
-        int seller_id PK
-        varchar gstin UK
-        int city_id FK
-        varchar status
-    }
-
-    ADDRESSES {
-        int address_id PK
-        int customer_id FK
-        int city_id FK
-        boolean is_default
-    }
-
-    PRODUCTS {
-        int product_id PK
-        varchar asin UK
-        int seller_id FK
-        int category_id FK
-        numeric price
-        int stock_qty
-    }
-
-    ORDERS {
-        int order_id PK
-        int customer_id FK
-        int address_id FK
-        numeric total_amount
-        varchar status
-    }
-
-    ORDER_ITEMS {
-        int order_id PK, FK
-        int line_no PK
-        int product_id FK
-        int seller_id FK
-        int quantity
-        numeric unit_price
-    }
-
-    CART_ITEMS {
-        int customer_id PK, FK
-        int product_id PK, FK
-        int quantity
-    }
-
-    PRODUCT_REVIEWS {
-        int review_id PK
-        int product_id FK
-        int customer_id FK
-        int rating
-    }
-
-    RETURNS {
-        int return_id PK
-        int order_id FK
-        int line_no FK
-        varchar status
-        numeric refund_amount
-    }
+| cities | city_id (integer) | PK, NN | Export identifier. |
+| cities | city_name (varchar(50)) | UK, NN | Each exported city name is distinct. |
+| cities | state (varchar(50)) | NN | Required geographic attribute; states repeat. |
+| categories | category_id (integer) | PK, NN | Export identifier. |
+| categories | category_name (varchar(100)) | UK, NN | All 40 names are distinct; workload looks names up. |
+| categories | parent_category_id (integer) | nullable self FK, RESTRICT; not-own-parent check | Root categories are null; deleting a category with children is unsafe. |
+| categories | is_digital (boolean) | NN | Distinguishes delivery-free product categories. |
+| sellers | seller_id (integer) | PK, NN | Export identifier. |
+| sellers | business_name (varchar(150)) | NN | Required seller display name (not declared unique business policy). |
+| sellers | gstin (char(15)) | UK, NN, GSTIN-format check | Stable tax registration; all source values match the Indian GSTIN shape. |
+| sellers | city_id (integer) | FK→cities, NN, RESTRICT | A seller has a city; retain referenced geography. |
+| sellers | joined_on (date) | NN | Date-only joining event. |
+| sellers | seller_rating (numeric(2,1)) | NN, 1.0–5.0 check | One-decimal rating in the source. |
+| sellers | status (varchar(10)) | NN, ACTIVE/CLOSED/SUSPENDED check | Exact observed domain. |
+| products | product_id (integer) | PK, NN | Export identifier. |
+| products | asin (char(10)) | UK, NN, `B`+9-uppercase-alphanumerics check | Natural product lookup code. |
+| products | seller_id (integer) | FK→sellers, NN, RESTRICT; with product_id UK | A listing belongs to its seller; composite UK supports order-line seller consistency. |
+| products | category_id (integer) | FK→categories, NN, RESTRICT | Every listing is classified; used in browse and delivery checks. |
+| products | title (varchar(255)) | NN | Required listing title. |
+| products | brand (varchar(100)) | NN | Required brand. |
+| products | mrp (numeric(12,2)) | NN, positive and ≥ price check | Rupee monetary amount with two decimals. |
+| products | price (numeric(12,2)) | NN, positive and ≤ MRP check | Current sell price. |
+| products | stock_qty (integer) | NN, ≥0 check | Integral inventory count. |
+| products | is_prime_eligible (boolean) | NN | Observed boolean flag. |
+| products | avg_rating (numeric(2,1)) | nullable; summary check | Null exactly when `review_count=0`; otherwise 1.0–5.0. |
+| products | review_count (integer) | NN; summary check | Non-negative source review summary. |
+| products | listed_on (date) | NN | Date-only listing date. |
+| products | status (varchar(20)) | NN, ACTIVE/INACTIVE/OUT_OF_STOCK check | Exact observed domain. |
+| customers | customer_id (integer) | PK, NN | Export identifier. |
+| customers | full_name (varchar(150)) | NN | Names repeat, so are not keys. |
+| customers | email (varchar(254)) | UK, NN, basic email-shape check | Distinct contact/login candidate. |
+| customers | phone (char(10)) | UK, NN, Indian mobile-shape check | Distinct ten-digit contact candidate. |
+| customers | city_id (integer) | FK→cities, NN, RESTRICT | Required home city. |
+| customers | signup_date (date) | NN | Date-only signup event. |
+| customers | is_prime (boolean) | NN | Membership flag. |
+| customers | prime_since (date) | nullable; paired-Prime check | Present only for Prime members and not earlier than signup. |
+| addresses | address_id (integer) | PK, NN | Export identifier. |
+| addresses | customer_id (integer) | FK→customers, NN, CASCADE | A saved address is owned by a customer. |
+| addresses | label (varchar(10)) | NN, HOME/WORK check | Exact observed domain. |
+| addresses | line1 (varchar(255)) | NN | Required free-form address line. |
+| addresses | city_id (integer) | FK→cities, NN, RESTRICT | Required delivery city. |
+| addresses | pincode (char(6)) | NN, six-digit Indian pincode check | Stored as text to preserve its format. |
+| addresses | is_default (boolean) | NN; partial UK(customer_id) where true | Exactly one default exists for every supplied customer; database enforces at most one. |
+| orders | order_id (integer) | PK, NN | Export identifier. |
+| orders | customer_id (integer) | FK→customers, NN, RESTRICT | Historical order ownership must not be deleted. |
+| orders | address_id (integer) | nullable composite FK with customer_id→addresses, RESTRICT | Digital orders legitimately lack an address; composite FK ensures a supplied address belongs to the ordering customer. |
+| orders | ordered_at (timestamptz) | NN | Source timestamps include `+05:30`. |
+| orders | payment_method (varchar(20)) | NN, six-value check | CARD, COD, EMI, GIFT_CARD, NETBANKING, UPI. |
+| orders | total_amount (numeric(14,2)) | NN, >0 check | Two-decimal order snapshot. |
+| orders | status (varchar(20)) | NN, seven-value check | CANCELLED, DELIVERED, OUT_FOR_DELIVERY, PACKED, PLACED, RETURNED, SHIPPED. |
+| orders | shipped_at (timestamptz) | nullable; ≥ ordered_at check | Absent for some unshipped orders. |
+| orders | delivered_at (timestamptz) | nullable; ≥ ordered_at and ≥ shipped_at check | Absent for some undelivered orders. |
+| order_items | order_id (integer) | PK part, FK→orders, NN, RESTRICT | Line's immutable parent order. |
+| order_items | line_no (smallint) | PK part, NN, >0 check | Positive line sequence (source 1–3). |
+| order_items | product_id (integer) | NN; composite FK with seller_id→products, RESTRICT | Product sold on the line. |
+| order_items | seller_id (integer) | FK→sellers, NN; composite product FK | Required historical fulfiller; composite FK guarantees it equals the listing seller. |
+| order_items | quantity (smallint) | NN, >0 check | Positive integer quantity. |
+| order_items | unit_price (numeric(12,2)) | NN, >0 check | Historical per-unit price. |
+| returns | return_id (integer) | PK, NN | Export identifier. |
+| returns | order_id (integer) | UK pair and composite FK→order_items, NN, RESTRICT | Identifies the returned order line. |
+| returns | line_no (smallint) | UK pair and composite FK→order_items, NN | Completes required order-item reference. |
+| returns | reason (varchar(30)) | NN, six-value check | DAMAGED, NOT_AS_DESCRIBED, NO_LONGER_NEEDED, QUALITY_ISSUE, SIZE_ISSUE, WRONG_ITEM. |
+| returns | requested_at (timestamptz) | NN | Timestamp with source offset. |
+| returns | status (varchar(20)) | NN, four-value check | PICKED_UP, REFUNDED, REJECTED, REQUESTED. |
+| returns | refund_amount (numeric(12,2)) | nullable; status/refund check | Positive and present iff status is REFUNDED. |
+| product_reviews | review_id (integer) | PK, NN | Export identifier. |
+| product_reviews | product_id (integer) | FK→products, NN, RESTRICT | Reviewed product. |
+| product_reviews | customer_id (integer) | FK→customers, NN, RESTRICT | Review author. |
+| product_reviews | rating (smallint) | NN, 1–5 check | Integral star rating. |
+| product_reviews | title (varchar(100)) | NN | Required short review title. |
+| product_reviews | body (text) | nullable | 13,811 source bodies are empty. |
+| product_reviews | verified_purchase (boolean) | NN | Observed boolean assertion. |
+| product_reviews | helpful_votes (integer) | NN, ≥0 check | Non-negative count. |
+| product_reviews | created_at (timestamptz) | NN | Timestamp with source offset. |
+| cart_items | customer_id (integer) | PK part, FK→customers, NN, CASCADE | Cart is disposable customer-owned state. |
+| cart_items | product_id (integer) | PK part, FK→products, NN, CASCADE | One row per product in a cart. |
+| cart_items | quantity (smallint) | NN, >0 check | Positive requested quantity. |
+| cart_items | added_at (timestamptz) | NN | Timestamp with source offset. |
+
+## Relationships and deletion rules
+
+Cities have many sellers, customers, and addresses. Categories form an optional-parent tree and have many products. Sellers list many products; customers save many addresses and place many orders. An order has one or more order items; product and seller each occur on many order items. A return is optional and one-to-one with an order item (`UNIQUE(order_id,line_no)`). Products and customers each have many reviews and cart rows; `cart_items` is the customer–product M:N bridge.
+
+Most master and historical relationships use `RESTRICT`: removing a city, category, seller, product, customer, address used by an order, order, or order item would destroy or orphan auditable facts. Address and cart rows instead use `CASCADE` from their owning customer; cart rows also cascade when a product is removed because they are transient shopping state. In practice, a customer with orders still cannot be deleted because `orders.customer_id` is restricted. The ER source is [er_diagram.mmd](../diagrams/er_diagram.mmd) and the rendered diagram is [er_diagram.png](../diagrams/er_diagram.png).
+
+## Load and validation results
+
+Validation used PostgreSQL 18 in clean local test databases (including verified clean run on fresh database `amazon_cp1_test_db`). `psql -v ON_ERROR_STOP=1 -f sql/01_schema.sql` and then `psql -v ON_ERROR_STOP=1 -f sql/02_load_data.sql` completed with no errors. All `\copy` commands reported the following actual counts.
+
+| Table | Rows |
+|---|---:|
+| cities | 10 |
+| categories | 40 |
+| sellers | 1,500 |
+| products | 30,000 |
+| customers | 30,000 |
+| addresses | 45,000 |
+| orders | 120,000 |
+| order_items | 240,000 |
+| returns | 5,374 |
+| product_reviews | 38,662 |
+| cart_items | 44,998 |
+
+Actual integrity-check SQL and results:
+
+```sql
+-- Result: 0
+SELECT count(*) AS seller_mismatches
+FROM order_items oi JOIN products p ON p.product_id = oi.product_id
+WHERE oi.seller_id <> p.seller_id;
+
+-- Result: 0
+SELECT count(*) AS customers_without_exactly_one_default
+FROM customers c
+WHERE (SELECT count(*) FROM addresses a
+       WHERE a.customer_id = c.customer_id AND a.is_default) <> 1;
+
+-- Result: 0 (and there are 5,882 address-less orders)
+SELECT count(*) AS addressless_orders_with_non_digital_item
+FROM orders o
+WHERE o.address_id IS NULL
+  AND EXISTS (
+      SELECT 1 FROM order_items oi
+      JOIN products p ON p.product_id = oi.product_id
+      JOIN categories c ON c.category_id = p.category_id
+      WHERE oi.order_id = o.order_id AND NOT c.is_digital
+  );
 ```
 
----
+The unmodified `queries/workload_30.sql` also ran with `ON_ERROR_STOP`; it reached its supplied `ROLLBACK` with no SQL or constraint error.
 
-## 5. Functional Dependencies
+## Functional dependencies and normal forms
 
-A functional dependency (FD) describes how one attribute or set of attributes determines another attribute or set of attributes.
+All tables have atomic fields (1NF). The principal FDs below come from declared keys; foreign keys do not make descriptive attributes functionally dependent on a child key. Each table is in BCNF, hence 3NF, with the documented denormalized snapshots as intentional exceptions at the *business* level rather than determinant violations within their own row.
 
-The main functional dependencies in this database are:
+| Table | Functional dependencies | 3NF / BCNF assessment |
+|---|---|---|
+| cities | `city_id → city_name, state`; `city_name → city_id, state` | Both determinants are candidate keys: BCNF. |
+| categories | `category_id → category_name, parent_category_id, is_digital`; `category_name →` all other fields | Candidate-key determinants only: BCNF. |
+| sellers | `seller_id →` non-key fields; `gstin →` non-key fields | PK and GSTIN are candidate keys: BCNF. |
+| products | `product_id →` non-key fields; `asin →` non-key fields; `(product_id,seller_id) →` non-key fields | PK/ASIN determine attributes; composite UK is a superkey: BCNF. |
+| customers | `customer_id →` non-key fields; `email →` non-key fields; `phone →` non-key fields | Candidate-key determinants only: BCNF. |
+| addresses | `address_id →` non-key fields; `(address_id,customer_id) →` non-key fields | PK determines all; redundant composite UK is a superkey: BCNF. |
+| orders | `order_id →` non-key fields | Only declared determinant is the PK: BCNF. |
+| order_items | `(order_id,line_no) → product_id,seller_id,quantity,unit_price` | Whole composite PK determines each fact; no partial dependency: BCNF. |
+| returns | `return_id →` non-key fields; `(order_id,line_no) →` non-key fields | Both the PK and one-return-per-line UK are candidate keys: BCNF. |
+| product_reviews | `review_id →` non-key fields | Review ID is the only asserted key; duplicate customer/product reviews are allowed by source: BCNF. |
+| cart_items | `(customer_id,product_id) → quantity,added_at` | Full composite key determines each cart fact: BCNF. |
 
-| Table | Functional Dependency |
-|---|---|
-| cities | city_id → city_name, state |
-| categories | category_id → category_name, parent_category_id, is_digital |
-| customers | customer_id → full_name, email, phone, city_id, signup_date, is_prime, prime_since |
-| sellers | seller_id → business_name, gstin, city_id, joined_on, seller_rating, status |
-| addresses | address_id → customer_id, label, line1, city_id, pincode, is_default |
-| products | product_id → asin, seller_id, category_id, title, brand, mrp, price, stock_qty, is_prime_eligible, avg_rating, review_count, listed_on, status |
-| orders | order_id → customer_id, address_id, ordered_at, payment_method, total_amount, status, shipped_at, delivered_at |
-| order_items | (order_id, line_no) → product_id, seller_id, quantity, unit_price |
-| cart_items | (customer_id, product_id) → quantity, added_at |
-| product_reviews | review_id → product_id, customer_id, rating, title, body, verified_purchase, helpful_votes, created_at |
-| returns | return_id → order_id, line_no, reason, requested_at, status, refund_amount |
+### Redundant and derived fields
 
-Additional candidate-key dependencies:
+- `products.avg_rating` and `products.review_count` are cached review aggregates derivable from `product_reviews`. They make product-page reads cheap but can drift; the schema enforces only the safe null/zero relationship, not equality to a mutable aggregate.
+- `order_items.seller_id` is derivable from the current `products.seller_id`. It is retained as the historical fulfilment/seller snapshot and is additionally protected by the composite FK, which produced 0 mismatches in the supplied export.
+- `orders.total_amount` is derivable from `sum(order_items.quantity * unit_price)` (subject to business treatment of taxes/shipping/discounts not exported). It is retained as an order-header snapshot for reporting and checkout. A cross-row equality check would require a trigger and is intentionally outside CP1.
 
-- email → customer_id and the other customer attributes, because email is UNIQUE.
-- phone → customer_id and the other customer attributes, because phone is UNIQUE.
-- gstin → seller_id and the other seller attributes, because GSTIN is UNIQUE.
-- asin → product_id and the other product attributes, because ASIN is UNIQUE.
-- city_name → city_id and state, because city_name is UNIQUE.
-- category_name → category_id, parent_category_id, and is_digital, because category_name is UNIQUE.
+## Data-quality findings and assumptions
 
-### Important Dependency in order_items
-
-Each product is associated with one seller in
+- All 30,000 customers have exactly one default address (no exception). The unique partial index enforces at most one; requiring at least one needs a cross-table/deferred rule and is documented rather than implemented with a trigger.
+- 5,882 orders have `address_id` null, and the integrity query found zero non-digital items among them. This is the supplied digital-product exception. It cannot be expressed as a simple declarative check spanning order items, products, and categories.
+- 7,968 products have a null `avg_rating`; every one has `review_count=0`, which motivated the rating-summary check.
+- 21,034 customers are not Prime and have null `prime_since`; no source row violated the paired Prime rule.
+- 13,926 orders have null `shipped_at`; 9,354 have null `delivered_at`. The source obeyed all non-null timestamp ordering checks, but status-to-timestamp implication is deliberately not overconstrained because the workload changes a packed order to shipped.
+- 1,388 return refunds are null, all on non-REFUNDED statuses; every REFUNDED row has a positive amount.
+- `product_reviews.verified_purchase` is an assertion, not a foreign-key proof: the given trust-and-safety workload intentionally searches for asserted verified reviews without a matching delivered purchase.

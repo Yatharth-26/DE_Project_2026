@@ -1,107 +1,101 @@
 erDiagram
+    CITIES ||--o{ SELLERS : hosts
     CITIES ||--o{ CUSTOMERS : lives_in
-    CITIES ||--o{ SELLERS : located_in
-    CITIES ||--o{ ADDRESSES : located_in
-
-    CATEGORIES ||--o{ CATEGORIES : parent_of
-    CATEGORIES ||--o{ PRODUCTS : contains
-
-    CUSTOMERS ||--o{ ADDRESSES : owns
-    CUSTOMERS ||--o{ ORDERS : places
-    CUSTOMERS ||--o{ CART_ITEMS : has
-    CUSTOMERS ||--o{ PRODUCT_REVIEWS : writes
-
+    CITIES ||--o{ ADDRESSES : locates
+    CATEGORIES o|--o{ CATEGORIES : parent_of
+    CATEGORIES ||--o{ PRODUCTS : classifies
     SELLERS ||--o{ PRODUCTS : lists
-
-    ADDRESSES o|--o{ ORDERS : used_for
-
-    ORDERS ||--o{ ORDER_ITEMS : contains
-
-    PRODUCTS ||--o{ ORDER_ITEMS : ordered_as
-    PRODUCTS ||--o{ CART_ITEMS : added_to_cart
+    CUSTOMERS ||--o{ ADDRESSES : saves
+    CUSTOMERS ||--o{ ORDERS : places
+    ADDRESSES o|--o{ ORDERS : ships_to
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ ORDER_ITEMS : appears_on
+    SELLERS ||--o{ ORDER_ITEMS : fulfils
+    ORDER_ITEMS ||--o| RETURNS : may_have
     PRODUCTS ||--o{ PRODUCT_REVIEWS : receives
-
-    ORDER_ITEMS ||--o{ RETURNS : returned_through
+    CUSTOMERS ||--o{ PRODUCT_REVIEWS : writes
+    CUSTOMERS ||--o{ CART_ITEMS : owns
+    PRODUCTS ||--o{ CART_ITEMS : is_in
 
     CITIES {
         int city_id PK
         varchar city_name UK
         varchar state
     }
-
     CATEGORIES {
         int category_id PK
         varchar category_name UK
         int parent_category_id FK
         boolean is_digital
     }
-
+    SELLERS {
+        int seller_id PK
+        varchar business_name
+        char gstin UK
+        int city_id FK
+        date joined_on
+        numeric seller_rating
+        varchar status
+    }
+    PRODUCTS {
+        int product_id PK
+        char asin UK
+        int seller_id FK
+        int category_id FK
+        varchar title
+        numeric price
+        int stock_qty
+        varchar status
+    }
     CUSTOMERS {
         int customer_id PK
         varchar email UK
-        varchar phone UK
+        char phone UK
         int city_id FK
         boolean is_prime
-        date prime_since
     }
-
-    SELLERS {
-        int seller_id PK
-        varchar gstin UK
-        int city_id FK
-        varchar status
-    }
-
     ADDRESSES {
         int address_id PK
         int customer_id FK
         int city_id FK
+        varchar label
+        char pincode
         boolean is_default
     }
-
-    PRODUCTS {
-        int product_id PK
-        varchar asin UK
-        int seller_id FK
-        int category_id FK
-        numeric price
-        int stock_qty
-    }
-
     ORDERS {
         int order_id PK
         int customer_id FK
         int address_id FK
+        timestamptz ordered_at
         numeric total_amount
         varchar status
     }
-
     ORDER_ITEMS {
         int order_id PK, FK
-        int line_no PK
+        smallint line_no PK
         int product_id FK
         int seller_id FK
-        int quantity
+        smallint quantity
         numeric unit_price
     }
-
-    CART_ITEMS {
-        int customer_id PK, FK
-        int product_id PK, FK
-        int quantity
+    RETURNS {
+        int return_id PK
+        int order_id FK
+        smallint line_no FK
+        varchar reason
+        varchar status
+        numeric refund_amount
     }
-
     PRODUCT_REVIEWS {
         int review_id PK
         int product_id FK
         int customer_id FK
-        int rating
+        smallint rating
+        boolean verified_purchase
     }
-
-    RETURNS {
-        int return_id PK
-        int order_id FK
-        int line_no FK
-        varchar status
-        numeric refund_amount
+    CART_ITEMS {
+        int customer_id PK, FK
+        int product_id PK, FK
+        smallint quantity
+        timestamptz added_at
     }
