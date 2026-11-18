@@ -1,0 +1,95 @@
+=== R01 run 1 ===
+Limit  (cost=674.16..674.22 rows=24 width=44) (actual time=3.857..3.860 rows=24.00 loops=1)
+  Buffers: shared hit=164
+  ->  Sort  (cost=674.16..680.72 rows=2624 width=44) (actual time=3.857..3.858 rows=24.00 loops=1)
+        Sort Key: avg_rating DESC NULLS LAST, review_count DESC
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=164
+        ->  Bitmap Heap Scan on products  (cost=85.52..600.88 rows=2624 width=44) (actual time=0.530..3.339 rows=2727.00 loops=1)
+              Recheck Cond: (((title)::text ~~* '%wireless%'::text) AND ((status)::text = 'ACTIVE'::text))
+              Heap Blocks: exact=137
+              Buffers: shared hit=158
+              ->  Bitmap Index Scan on idx_products_title_trgm  (cost=0.00..84.87 rows=2624 width=0) (actual time=0.507..0.507 rows=2727.00 loops=1)
+                    Index Cond: ((title)::text ~~* '%wireless%'::text)
+                    Index Searches: 1
+                    Buffers: shared hit=21
+Planning:
+  Buffers: shared hit=330
+Planning Time: 2.524 ms
+Execution Time: 3.924 ms
+=== R01 run 2 ===
+Limit  (cost=674.16..674.22 rows=24 width=44) (actual time=2.169..2.171 rows=24.00 loops=1)
+  Buffers: shared hit=164
+  ->  Sort  (cost=674.16..680.72 rows=2624 width=44) (actual time=2.168..2.169 rows=24.00 loops=1)
+        Sort Key: avg_rating DESC NULLS LAST, review_count DESC
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=164
+        ->  Bitmap Heap Scan on products  (cost=85.52..600.88 rows=2624 width=44) (actual time=0.324..1.857 rows=2727.00 loops=1)
+              Recheck Cond: (((title)::text ~~* '%wireless%'::text) AND ((status)::text = 'ACTIVE'::text))
+              Heap Blocks: exact=137
+              Buffers: shared hit=158
+              ->  Bitmap Index Scan on idx_products_title_trgm  (cost=0.00..84.87 rows=2624 width=0) (actual time=0.269..0.269 rows=2727.00 loops=1)
+                    Index Cond: ((title)::text ~~* '%wireless%'::text)
+                    Index Searches: 1
+                    Buffers: shared hit=21
+Planning:
+  Buffers: shared hit=330
+Planning Time: 1.046 ms
+Execution Time: 2.219 ms
+=== R01 run 3 ===
+Limit  (cost=674.16..674.22 rows=24 width=44) (actual time=1.782..1.783 rows=24.00 loops=1)
+  Buffers: shared hit=164
+  ->  Sort  (cost=674.16..680.72 rows=2624 width=44) (actual time=1.781..1.782 rows=24.00 loops=1)
+        Sort Key: avg_rating DESC NULLS LAST, review_count DESC
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=164
+        ->  Bitmap Heap Scan on products  (cost=85.52..600.88 rows=2624 width=44) (actual time=0.204..1.507 rows=2727.00 loops=1)
+              Recheck Cond: (((title)::text ~~* '%wireless%'::text) AND ((status)::text = 'ACTIVE'::text))
+              Heap Blocks: exact=137
+              Buffers: shared hit=158
+              ->  Bitmap Index Scan on idx_products_title_trgm  (cost=0.00..84.87 rows=2624 width=0) (actual time=0.193..0.193 rows=2727.00 loops=1)
+                    Index Cond: ((title)::text ~~* '%wireless%'::text)
+                    Index Searches: 1
+                    Buffers: shared hit=21
+Planning:
+  Buffers: shared hit=330
+Planning Time: 0.836 ms
+Execution Time: 1.812 ms
+=== R01 run 4 ===
+Limit  (cost=674.16..674.22 rows=24 width=44) (actual time=1.743..1.744 rows=24.00 loops=1)
+  Buffers: shared hit=164
+  ->  Sort  (cost=674.16..680.72 rows=2624 width=44) (actual time=1.742..1.743 rows=24.00 loops=1)
+        Sort Key: avg_rating DESC NULLS LAST, review_count DESC
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=164
+        ->  Bitmap Heap Scan on products  (cost=85.52..600.88 rows=2624 width=44) (actual time=0.212..1.478 rows=2727.00 loops=1)
+              Recheck Cond: (((title)::text ~~* '%wireless%'::text) AND ((status)::text = 'ACTIVE'::text))
+              Heap Blocks: exact=137
+              Buffers: shared hit=158
+              ->  Bitmap Index Scan on idx_products_title_trgm  (cost=0.00..84.87 rows=2624 width=0) (actual time=0.200..0.200 rows=2727.00 loops=1)
+                    Index Cond: ((title)::text ~~* '%wireless%'::text)
+                    Index Searches: 1
+                    Buffers: shared hit=21
+Planning:
+  Buffers: shared hit=330
+Planning Time: 0.808 ms
+Execution Time: 1.772 ms
+=== R01 run 5 ===
+Limit  (cost=674.16..674.22 rows=24 width=44) (actual time=2.002..2.003 rows=24.00 loops=1)
+  Buffers: shared hit=164
+  ->  Sort  (cost=674.16..680.72 rows=2624 width=44) (actual time=2.001..2.002 rows=24.00 loops=1)
+        Sort Key: avg_rating DESC NULLS LAST, review_count DESC
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=164
+        ->  Bitmap Heap Scan on products  (cost=85.52..600.88 rows=2624 width=44) (actual time=0.230..1.680 rows=2727.00 loops=1)
+              Recheck Cond: (((title)::text ~~* '%wireless%'::text) AND ((status)::text = 'ACTIVE'::text))
+              Heap Blocks: exact=137
+              Buffers: shared hit=158
+              ->  Bitmap Index Scan on idx_products_title_trgm  (cost=0.00..84.87 rows=2624 width=0) (actual time=0.219..0.219 rows=2727.00 loops=1)
+                    Index Cond: ((title)::text ~~* '%wireless%'::text)
+                    Index Searches: 1
+                    Buffers: shared hit=21
+Planning:
+  Buffers: shared hit=330
+Planning Time: 0.947 ms
+Execution Time: 2.037 ms

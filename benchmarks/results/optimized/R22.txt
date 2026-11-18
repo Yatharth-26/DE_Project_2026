@@ -1,0 +1,50 @@
+=== R22 run 1 ===
+Limit  (cost=4457.29..4458.78 rows=25 width=30) (actual time=6.757..6.759 rows=25.00 loops=1)
+  Buffers: shared hit=1471
+  ->  Index Scan using idx_orders_ordered_at on orders  (cost=0.42..7131.42 rows=120000 width=30) (actual time=0.007..5.532 rows=75025.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=1471
+Planning:
+  Buffers: shared hit=183
+Planning Time: 0.320 ms
+Execution Time: 6.772 ms
+=== R22 run 2 ===
+Limit  (cost=4457.29..4458.78 rows=25 width=30) (actual time=6.411..6.414 rows=25.00 loops=1)
+  Buffers: shared hit=1471
+  ->  Index Scan using idx_orders_ordered_at on orders  (cost=0.42..7131.42 rows=120000 width=30) (actual time=0.006..5.247 rows=75025.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=1471
+Planning:
+  Buffers: shared hit=183
+Planning Time: 0.268 ms
+Execution Time: 6.425 ms
+=== R22 run 3 ===
+Limit  (cost=4457.29..4458.78 rows=25 width=30) (actual time=6.534..6.536 rows=25.00 loops=1)
+  Buffers: shared hit=1471
+  ->  Index Scan using idx_orders_ordered_at on orders  (cost=0.42..7131.42 rows=120000 width=30) (actual time=0.006..5.335 rows=75025.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=1471
+Planning:
+  Buffers: shared hit=183
+Planning Time: 0.291 ms
+Execution Time: 6.548 ms
+=== R22 run 4 ===
+Limit  (cost=4457.29..4458.78 rows=25 width=30) (actual time=6.383..6.385 rows=25.00 loops=1)
+  Buffers: shared hit=1471
+  ->  Index Scan using idx_orders_ordered_at on orders  (cost=0.42..7131.42 rows=120000 width=30) (actual time=0.006..5.196 rows=75025.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=1471
+Planning:
+  Buffers: shared hit=183
+Planning Time: 0.280 ms
+Execution Time: 6.397 ms
+=== R22 run 5 ===
+Limit  (cost=4457.29..4458.78 rows=25 width=30) (actual time=6.695..6.697 rows=25.00 loops=1)
+  Buffers: shared hit=1471
+  ->  Index Scan using idx_orders_ordered_at on orders  (cost=0.42..7131.42 rows=120000 width=30) (actual time=0.006..5.455 rows=75025.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=1471
+Planning:
+  Buffers: shared hit=183
+Planning Time: 0.276 ms
+Execution Time: 6.710 ms

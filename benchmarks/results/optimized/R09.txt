@@ -1,0 +1,135 @@
+=== R09 run 1 ===
+GroupAggregate  (cost=6322.39..7446.55 rows=37472 width=49) (actual time=11.372..13.459 rows=12.00 loops=1)
+  Group Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+  Buffers: shared hit=711
+  ->  Sort  (cost=6322.39..6416.07 rows=37472 width=14) (actual time=11.071..11.743 rows=37166.00 loops=1)
+        Sort Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+        Sort Method: quicksort  Memory: 2698kB
+        Buffers: shared hit=711
+        ->  Hash Join  (cost=1048.42..3475.74 rows=37472 width=14) (actual time=2.594..9.046 rows=37166.00 loops=1)
+              Hash Cond: (o.customer_id = c.customer_id)
+              Buffers: shared hit=703
+              ->  Index Only Scan using idx_orders_ordered_at on orders o  (cost=0.42..2235.68 rows=37472 width=17) (actual time=0.005..2.081 rows=37166.00 loops=1)
+                    Index Cond: ((ordered_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone) AND (ordered_at < '2027-01-01 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text <> 'CANCELLED'::text)
+                    Rows Removed by Filter: 2614
+                    Heap Fetches: 185
+                    Index Searches: 1
+                    Buffers: shared hit=330
+              ->  Hash  (cost=673.00..673.00 rows=30000 width=5) (actual time=2.567..2.568 rows=30000.00 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 1428kB
+                    Buffers: shared hit=373
+                    ->  Seq Scan on customers c  (cost=0.00..673.00 rows=30000 width=5) (actual time=0.004..1.461 rows=30000.00 loops=1)
+                          Buffers: shared hit=373
+Planning:
+  Buffers: shared hit=439
+Planning Time: 0.734 ms
+Execution Time: 13.509 ms
+=== R09 run 2 ===
+GroupAggregate  (cost=6322.39..7446.55 rows=37472 width=49) (actual time=11.566..13.777 rows=12.00 loops=1)
+  Group Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+  Buffers: shared hit=711
+  ->  Sort  (cost=6322.39..6416.07 rows=37472 width=14) (actual time=11.265..11.958 rows=37166.00 loops=1)
+        Sort Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+        Sort Method: quicksort  Memory: 2698kB
+        Buffers: shared hit=711
+        ->  Hash Join  (cost=1048.42..3475.74 rows=37472 width=14) (actual time=2.578..9.259 rows=37166.00 loops=1)
+              Hash Cond: (o.customer_id = c.customer_id)
+              Buffers: shared hit=703
+              ->  Index Only Scan using idx_orders_ordered_at on orders o  (cost=0.42..2235.68 rows=37472 width=17) (actual time=0.004..2.188 rows=37166.00 loops=1)
+                    Index Cond: ((ordered_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone) AND (ordered_at < '2027-01-01 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text <> 'CANCELLED'::text)
+                    Rows Removed by Filter: 2614
+                    Heap Fetches: 185
+                    Index Searches: 1
+                    Buffers: shared hit=330
+              ->  Hash  (cost=673.00..673.00 rows=30000 width=5) (actual time=2.556..2.556 rows=30000.00 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 1428kB
+                    Buffers: shared hit=373
+                    ->  Seq Scan on customers c  (cost=0.00..673.00 rows=30000 width=5) (actual time=0.003..1.452 rows=30000.00 loops=1)
+                          Buffers: shared hit=373
+Planning:
+  Buffers: shared hit=439
+Planning Time: 0.686 ms
+Execution Time: 13.827 ms
+=== R09 run 3 ===
+GroupAggregate  (cost=6322.39..7446.55 rows=37472 width=49) (actual time=11.355..13.460 rows=12.00 loops=1)
+  Group Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+  Buffers: shared hit=711
+  ->  Sort  (cost=6322.39..6416.07 rows=37472 width=14) (actual time=11.043..11.684 rows=37166.00 loops=1)
+        Sort Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+        Sort Method: quicksort  Memory: 2698kB
+        Buffers: shared hit=711
+        ->  Hash Join  (cost=1048.42..3475.74 rows=37472 width=14) (actual time=2.556..9.009 rows=37166.00 loops=1)
+              Hash Cond: (o.customer_id = c.customer_id)
+              Buffers: shared hit=703
+              ->  Index Only Scan using idx_orders_ordered_at on orders o  (cost=0.42..2235.68 rows=37472 width=17) (actual time=0.004..2.124 rows=37166.00 loops=1)
+                    Index Cond: ((ordered_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone) AND (ordered_at < '2027-01-01 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text <> 'CANCELLED'::text)
+                    Rows Removed by Filter: 2614
+                    Heap Fetches: 185
+                    Index Searches: 1
+                    Buffers: shared hit=330
+              ->  Hash  (cost=673.00..673.00 rows=30000 width=5) (actual time=2.532..2.533 rows=30000.00 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 1428kB
+                    Buffers: shared hit=373
+                    ->  Seq Scan on customers c  (cost=0.00..673.00 rows=30000 width=5) (actual time=0.003..1.466 rows=30000.00 loops=1)
+                          Buffers: shared hit=373
+Planning:
+  Buffers: shared hit=439
+Planning Time: 0.600 ms
+Execution Time: 13.502 ms
+=== R09 run 4 ===
+GroupAggregate  (cost=6322.39..7446.55 rows=37472 width=49) (actual time=11.327..13.442 rows=12.00 loops=1)
+  Group Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+  Buffers: shared hit=711
+  ->  Sort  (cost=6322.39..6416.07 rows=37472 width=14) (actual time=11.028..11.715 rows=37166.00 loops=1)
+        Sort Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+        Sort Method: quicksort  Memory: 2698kB
+        Buffers: shared hit=711
+        ->  Hash Join  (cost=1048.42..3475.74 rows=37472 width=14) (actual time=2.527..9.039 rows=37166.00 loops=1)
+              Hash Cond: (o.customer_id = c.customer_id)
+              Buffers: shared hit=703
+              ->  Index Only Scan using idx_orders_ordered_at on orders o  (cost=0.42..2235.68 rows=37472 width=17) (actual time=0.005..2.085 rows=37166.00 loops=1)
+                    Index Cond: ((ordered_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone) AND (ordered_at < '2027-01-01 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text <> 'CANCELLED'::text)
+                    Rows Removed by Filter: 2614
+                    Heap Fetches: 185
+                    Index Searches: 1
+                    Buffers: shared hit=330
+              ->  Hash  (cost=673.00..673.00 rows=30000 width=5) (actual time=2.504..2.504 rows=30000.00 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 1428kB
+                    Buffers: shared hit=373
+                    ->  Seq Scan on customers c  (cost=0.00..673.00 rows=30000 width=5) (actual time=0.004..1.459 rows=30000.00 loops=1)
+                          Buffers: shared hit=373
+Planning:
+  Buffers: shared hit=439
+Planning Time: 0.581 ms
+Execution Time: 13.496 ms
+=== R09 run 5 ===
+GroupAggregate  (cost=6322.39..7446.55 rows=37472 width=49) (actual time=11.397..13.536 rows=12.00 loops=1)
+  Group Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+  Buffers: shared hit=711
+  ->  Sort  (cost=6322.39..6416.07 rows=37472 width=14) (actual time=11.097..11.781 rows=37166.00 loops=1)
+        Sort Key: (date_trunc('month'::text, o.ordered_at)), c.is_prime
+        Sort Method: quicksort  Memory: 2698kB
+        Buffers: shared hit=711
+        ->  Hash Join  (cost=1048.42..3475.74 rows=37472 width=14) (actual time=2.641..9.124 rows=37166.00 loops=1)
+              Hash Cond: (o.customer_id = c.customer_id)
+              Buffers: shared hit=703
+              ->  Index Only Scan using idx_orders_ordered_at on orders o  (cost=0.42..2235.68 rows=37472 width=17) (actual time=0.005..2.072 rows=37166.00 loops=1)
+                    Index Cond: ((ordered_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone) AND (ordered_at < '2027-01-01 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text <> 'CANCELLED'::text)
+                    Rows Removed by Filter: 2614
+                    Heap Fetches: 185
+                    Index Searches: 1
+                    Buffers: shared hit=330
+              ->  Hash  (cost=673.00..673.00 rows=30000 width=5) (actual time=2.617..2.617 rows=30000.00 loops=1)
+                    Buckets: 32768  Batches: 1  Memory Usage: 1428kB
+                    Buffers: shared hit=373
+                    ->  Seq Scan on customers c  (cost=0.00..673.00 rows=30000 width=5) (actual time=0.003..1.498 rows=30000.00 loops=1)
+                          Buffers: shared hit=373
+Planning:
+  Buffers: shared hit=439
+Planning Time: 0.591 ms
+Execution Time: 13.578 ms

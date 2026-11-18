@@ -1,0 +1,75 @@
+=== W06 run 1 ===
+Delete on cart_items  (cost=372.75..1082.85 rows=0 width=0) (actual time=2.260..2.260 rows=0.00 loops=1)
+  Buffers: shared hit=11929 dirtied=286
+  ->  Bitmap Heap Scan on cart_items  (cost=372.75..1082.85 rows=17607 width=6) (actual time=0.269..0.949 rows=11324.00 loops=1)
+        Recheck Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+        Heap Blocks: exact=287
+        Buffers: shared hit=319
+        ->  Bitmap Index Scan on idx_cart_items_added  (cost=0.00..368.35 rows=17607 width=0) (actual time=0.250..0.250 rows=11324.00 loops=1)
+              Index Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+              Index Searches: 1
+              Buffers: shared hit=32
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.232 ms
+Execution Time: 2.303 ms
+=== W06 run 2 ===
+Delete on cart_items  (cost=372.75..1082.85 rows=0 width=0) (actual time=2.534..2.534 rows=0.00 loops=1)
+  Buffers: shared hit=11643
+  ->  Bitmap Heap Scan on cart_items  (cost=372.75..1082.85 rows=17607 width=6) (actual time=0.263..1.216 rows=11324.00 loops=1)
+        Recheck Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+        Heap Blocks: exact=287
+        Buffers: shared hit=319
+        ->  Bitmap Index Scan on idx_cart_items_added  (cost=0.00..368.35 rows=17607 width=0) (actual time=0.243..0.243 rows=11324.00 loops=1)
+              Index Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+              Index Searches: 1
+              Buffers: shared hit=32
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.181 ms
+Execution Time: 2.577 ms
+=== W06 run 3 ===
+Delete on cart_items  (cost=372.75..1082.85 rows=0 width=0) (actual time=2.485..2.485 rows=0.00 loops=1)
+  Buffers: shared hit=11643
+  ->  Bitmap Heap Scan on cart_items  (cost=372.75..1082.85 rows=17607 width=6) (actual time=0.233..1.184 rows=11324.00 loops=1)
+        Recheck Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+        Heap Blocks: exact=287
+        Buffers: shared hit=319
+        ->  Bitmap Index Scan on idx_cart_items_added  (cost=0.00..368.35 rows=17607 width=0) (actual time=0.212..0.212 rows=11324.00 loops=1)
+              Index Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+              Index Searches: 1
+              Buffers: shared hit=32
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.179 ms
+Execution Time: 2.525 ms
+=== W06 run 4 ===
+Delete on cart_items  (cost=372.75..1082.85 rows=0 width=0) (actual time=2.444..2.444 rows=0.00 loops=1)
+  Buffers: shared hit=11643
+  ->  Bitmap Heap Scan on cart_items  (cost=372.75..1082.85 rows=17607 width=6) (actual time=0.230..1.153 rows=11324.00 loops=1)
+        Recheck Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+        Heap Blocks: exact=287
+        Buffers: shared hit=319
+        ->  Bitmap Index Scan on idx_cart_items_added  (cost=0.00..368.35 rows=17607 width=0) (actual time=0.210..0.210 rows=11324.00 loops=1)
+              Index Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+              Index Searches: 1
+              Buffers: shared hit=32
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.170 ms
+Execution Time: 2.482 ms
+=== W06 run 5 ===
+Delete on cart_items  (cost=372.75..1082.85 rows=0 width=0) (actual time=2.617..2.617 rows=0.00 loops=1)
+  Buffers: shared hit=11643
+  ->  Bitmap Heap Scan on cart_items  (cost=372.75..1082.85 rows=17607 width=6) (actual time=0.233..1.233 rows=11324.00 loops=1)
+        Recheck Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+        Heap Blocks: exact=287
+        Buffers: shared hit=319
+        ->  Bitmap Index Scan on idx_cart_items_added  (cost=0.00..368.35 rows=17607 width=0) (actual time=0.207..0.207 rows=11324.00 loops=1)
+              Index Cond: (added_at < ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '90 days'::interval))
+              Index Searches: 1
+              Buffers: shared hit=32
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.165 ms
+Execution Time: 2.656 ms

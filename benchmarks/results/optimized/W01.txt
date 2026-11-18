@@ -1,0 +1,50 @@
+=== W01 run 1 ===
+Insert on orders  (cost=0.00..0.01 rows=0 width=0) (actual time=0.185..0.185 rows=0.00 loops=1)
+  Buffers: shared hit=153 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=170) (actual time=0.002..0.002 rows=1.00 loops=1)
+Planning:
+  Buffers: shared hit=3
+Planning Time: 0.033 ms
+Trigger for constraint orders_customer_id_fkey: time=0.271 calls=1
+Trigger for constraint fk_orders_address_owner: time=0.171 calls=1
+Execution Time: 0.637 ms
+=== W01 run 2 ===
+Insert on orders  (cost=0.00..0.01 rows=0 width=0) (actual time=0.192..0.192 rows=0.00 loops=1)
+  Buffers: shared hit=154 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=170) (actual time=0.002..0.002 rows=1.00 loops=1)
+Planning:
+  Buffers: shared hit=3
+Planning Time: 0.035 ms
+Trigger for constraint orders_customer_id_fkey: time=0.287 calls=1
+Trigger for constraint fk_orders_address_owner: time=0.144 calls=1
+Execution Time: 0.634 ms
+=== W01 run 3 ===
+Insert on orders  (cost=0.00..0.01 rows=0 width=0) (actual time=0.182..0.183 rows=0.00 loops=1)
+  Buffers: shared hit=154 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=170) (actual time=0.002..0.002 rows=1.00 loops=1)
+Planning:
+  Buffers: shared hit=3
+Planning Time: 0.035 ms
+Trigger for constraint orders_customer_id_fkey: time=0.269 calls=1
+Trigger for constraint fk_orders_address_owner: time=0.146 calls=1
+Execution Time: 0.608 ms
+=== W01 run 4 ===
+Insert on orders  (cost=0.00..0.01 rows=0 width=0) (actual time=0.185..0.185 rows=0.00 loops=1)
+  Buffers: shared hit=154 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=170) (actual time=0.002..0.002 rows=1.00 loops=1)
+Planning:
+  Buffers: shared hit=3
+Planning Time: 0.034 ms
+Trigger for constraint orders_customer_id_fkey: time=0.271 calls=1
+Trigger for constraint fk_orders_address_owner: time=0.138 calls=1
+Execution Time: 0.603 ms
+=== W01 run 5 ===
+Insert on orders  (cost=0.00..0.01 rows=0 width=0) (actual time=0.172..0.172 rows=0.00 loops=1)
+  Buffers: shared hit=154 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=170) (actual time=0.002..0.002 rows=1.00 loops=1)
+Planning:
+  Buffers: shared hit=3
+Planning Time: 0.032 ms
+Trigger for constraint orders_customer_id_fkey: time=0.285 calls=1
+Trigger for constraint fk_orders_address_owner: time=0.169 calls=1
+Execution Time: 0.636 ms

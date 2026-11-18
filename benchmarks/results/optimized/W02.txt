@@ -1,0 +1,60 @@
+=== W02 run 1 ===
+Update on products  (cost=0.29..8.31 rows=0 width=0) (actual time=0.537..0.538 rows=0.00 loops=1)
+  Buffers: shared hit=76 dirtied=2
+  ->  Index Scan using uq_products_product_seller on products  (cost=0.29..8.31 rows=1 width=10) (actual time=0.008..0.010 rows=1.00 loops=1)
+        Index Cond: (product_id = 4322)
+        Filter: (stock_qty >= 1)
+        Index Searches: 1
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=201
+Planning Time: 0.341 ms
+Execution Time: 0.585 ms
+=== W02 run 2 ===
+Update on products  (cost=0.29..8.31 rows=0 width=0) (actual time=0.532..0.533 rows=0.00 loops=1)
+  Buffers: shared hit=76
+  ->  Index Scan using uq_products_product_seller on products  (cost=0.29..8.31 rows=1 width=10) (actual time=0.011..0.014 rows=1.00 loops=1)
+        Index Cond: (product_id = 4322)
+        Filter: (stock_qty >= 1)
+        Index Searches: 1
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=201
+Planning Time: 0.359 ms
+Execution Time: 0.574 ms
+=== W02 run 3 ===
+Update on products  (cost=0.29..8.31 rows=0 width=0) (actual time=0.556..0.557 rows=0.00 loops=1)
+  Buffers: shared hit=76
+  ->  Index Scan using uq_products_product_seller on products  (cost=0.29..8.31 rows=1 width=10) (actual time=0.010..0.013 rows=1.00 loops=1)
+        Index Cond: (product_id = 4322)
+        Filter: (stock_qty >= 1)
+        Index Searches: 1
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=201
+Planning Time: 0.347 ms
+Execution Time: 0.595 ms
+=== W02 run 4 ===
+Update on products  (cost=0.29..8.31 rows=0 width=0) (actual time=0.536..0.537 rows=0.00 loops=1)
+  Buffers: shared hit=77 dirtied=1 written=1
+  ->  Index Scan using uq_products_product_seller on products  (cost=0.29..8.31 rows=1 width=10) (actual time=0.010..0.010 rows=1.00 loops=1)
+        Index Cond: (product_id = 4322)
+        Filter: (stock_qty >= 1)
+        Index Searches: 1
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=201
+Planning Time: 0.340 ms
+Execution Time: 0.575 ms
+=== W02 run 5 ===
+Update on products  (cost=0.29..8.31 rows=0 width=0) (actual time=0.519..0.519 rows=0.00 loops=1)
+  Buffers: shared hit=77
+  ->  Index Scan using uq_products_product_seller on products  (cost=0.29..8.31 rows=1 width=10) (actual time=0.010..0.011 rows=1.00 loops=1)
+        Index Cond: (product_id = 4322)
+        Filter: (stock_qty >= 1)
+        Index Searches: 1
+        Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=201
+Planning Time: 0.337 ms
+Execution Time: 0.556 ms

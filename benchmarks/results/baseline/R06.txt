@@ -1,75 +1,75 @@
 === R06 run 1 ===
-Sort  (cost=5032.67..5032.67 rows=1 width=23) (actual time=6.894..7.728 rows=1.00 loops=1)
+Sort  (cost=5040.59..5040.59 rows=1 width=23) (actual time=5.100..5.619 rows=1.00 loops=1)
   Sort Key: o.ordered_at
   Sort Method: quicksort  Memory: 25kB
   Buffers: shared hit=2014
-  ->  Gather  (cost=1000.29..5032.66 rows=1 width=23) (actual time=6.692..7.720 rows=1.00 loops=1)
+  ->  Gather  (cost=1000.29..5040.58 rows=1 width=23) (actual time=4.938..5.613 rows=1.00 loops=1)
         Workers Planned: 1
         Workers Launched: 1
         Buffers: shared hit=2011
-        ->  Nested Loop  (cost=0.29..4032.56 rows=1 width=23) (actual time=4.474..4.580 rows=0.50 loops=2)
+        ->  Nested Loop  (cost=0.29..4040.48 rows=1 width=23) (actual time=3.125..3.193 rows=0.50 loops=2)
               Buffers: shared hit=2011
-              ->  Parallel Seq Scan on order_items oi  (cost=0.00..3348.71 rows=93 width=15) (actual time=0.064..4.213 rows=71.00 loops=2)
+              ->  Parallel Seq Scan on order_items oi  (cost=0.00..3348.71 rows=94 width=15) (actual time=0.006..2.869 rows=71.00 loops=2)
                     Filter: (seller_id = 217)
                     Rows Removed by Filter: 119929
                     Buffers: shared hit=1584
-              ->  Index Scan using orders_pkey on orders o  (cost=0.29..7.35 rows=1 width=12) (actual time=0.005..0.005 rows=0.01 loops=142)
+              ->  Index Scan using orders_pkey on orders o  (cost=0.29..7.36 rows=1 width=12) (actual time=0.004..0.004 rows=0.01 loops=142)
                     Index Cond: (order_id = oi.order_id)
                     Filter: (date_trunc('month'::text, ordered_at) = '2026-06-01 00:00:00+05:30'::timestamp with time zone)
                     Rows Removed by Filter: 1
                     Index Searches: 142
                     Buffers: shared hit=427
 Planning:
-  Buffers: shared hit=239
-Planning Time: 0.427 ms
-Execution Time: 7.762 ms
+  Buffers: shared hit=241
+Planning Time: 0.376 ms
+Execution Time: 5.644 ms
 === R06 run 2 ===
-Sort  (cost=5032.67..5032.67 rows=1 width=23) (actual time=4.166..4.756 rows=1.00 loops=1)
+Sort  (cost=5040.59..5040.59 rows=1 width=23) (actual time=3.809..4.304 rows=1.00 loops=1)
   Sort Key: o.ordered_at
   Sort Method: quicksort  Memory: 25kB
   Buffers: shared hit=2014
-  ->  Gather  (cost=1000.29..5032.66 rows=1 width=23) (actual time=4.140..4.749 rows=1.00 loops=1)
+  ->  Gather  (cost=1000.29..5040.58 rows=1 width=23) (actual time=3.644..4.295 rows=1.00 loops=1)
         Workers Planned: 1
         Workers Launched: 1
         Buffers: shared hit=2011
-        ->  Nested Loop  (cost=0.29..4032.56 rows=1 width=23) (actual time=2.918..2.986 rows=0.50 loops=2)
+        ->  Nested Loop  (cost=0.29..4040.48 rows=1 width=23) (actual time=2.935..3.002 rows=0.50 loops=2)
               Buffers: shared hit=2011
-              ->  Parallel Seq Scan on order_items oi  (cost=0.00..3348.71 rows=93 width=15) (actual time=0.038..2.801 rows=71.00 loops=2)
+              ->  Parallel Seq Scan on order_items oi  (cost=0.00..3348.71 rows=94 width=15) (actual time=0.018..2.827 rows=71.00 loops=2)
                     Filter: (seller_id = 217)
                     Rows Removed by Filter: 119929
                     Buffers: shared hit=1584
-              ->  Index Scan using orders_pkey on orders o  (cost=0.29..7.35 rows=1 width=12) (actual time=0.003..0.003 rows=0.01 loops=142)
+              ->  Index Scan using orders_pkey on orders o  (cost=0.29..7.36 rows=1 width=12) (actual time=0.002..0.002 rows=0.01 loops=142)
                     Index Cond: (order_id = oi.order_id)
                     Filter: (date_trunc('month'::text, ordered_at) = '2026-06-01 00:00:00+05:30'::timestamp with time zone)
                     Rows Removed by Filter: 1
                     Index Searches: 142
                     Buffers: shared hit=427
 Planning:
-  Buffers: shared hit=239
-Planning Time: 0.393 ms
-Execution Time: 4.787 ms
+  Buffers: shared hit=241
+Planning Time: 0.318 ms
+Execution Time: 4.328 ms
 === R06 run 3 ===
-Sort  (cost=5032.67..5032.67 rows=1 width=23) (actual time=4.353..5.031 rows=1.00 loops=1)
+Sort  (cost=5040.59..5040.59 rows=1 width=23) (actual time=3.792..4.290 rows=1.00 loops=1)
   Sort Key: o.ordered_at
   Sort Method: quicksort  Memory: 25kB
   Buffers: shared hit=2014
-  ->  Gather  (cost=1000.29..5032.66 rows=1 width=23) (actual time=4.179..5.024 rows=1.00 loops=1)
+  ->  Gather  (cost=1000.29..5040.58 rows=1 width=23) (actual time=3.768..4.284 rows=1.00 loops=1)
         Workers Planned: 1
         Workers Launched: 1
         Buffers: shared hit=2011
-        ->  Nested Loop  (cost=0.29..4032.56 rows=1 width=23) (actual time=3.109..3.178 rows=0.50 loops=2)
+        ->  Nested Loop  (cost=0.29..4040.48 rows=1 width=23) (actual time=2.937..3.003 rows=0.50 loops=2)
               Buffers: shared hit=2011
-              ->  Parallel Seq Scan on order_items oi  (cost=0.00..3348.71 rows=93 width=15) (actual time=0.075..2.980 rows=71.00 loops=2)
+              ->  Parallel Seq Scan on order_items oi  (cost=0.00..3348.71 rows=94 width=15) (actual time=0.028..2.829 rows=71.00 loops=2)
                     Filter: (seller_id = 217)
                     Rows Removed by Filter: 119929
                     Buffers: shared hit=1584
-              ->  Index Scan using orders_pkey on orders o  (cost=0.29..7.35 rows=1 width=12) (actual time=0.003..0.003 rows=0.01 loops=142)
+              ->  Index Scan using orders_pkey on orders o  (cost=0.29..7.36 rows=1 width=12) (actual time=0.002..0.002 rows=0.01 loops=142)
                     Index Cond: (order_id = oi.order_id)
                     Filter: (date_trunc('month'::text, ordered_at) = '2026-06-01 00:00:00+05:30'::timestamp with time zone)
                     Rows Removed by Filter: 1
                     Index Searches: 142
                     Buffers: shared hit=427
 Planning:
-  Buffers: shared hit=239
-Planning Time: 0.383 ms
-Execution Time: 5.056 ms
+  Buffers: shared hit=241
+Planning Time: 0.311 ms
+Execution Time: 4.313 ms

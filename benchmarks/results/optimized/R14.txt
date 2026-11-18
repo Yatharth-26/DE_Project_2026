@@ -1,0 +1,55 @@
+=== R14 run 1 ===
+Limit  (cost=0.29..16.82 rows=50 width=104) (actual time=0.013..0.075 rows=50.00 loops=1)
+  Buffers: shared hit=52
+  ->  Index Scan using idx_products_discount_ratio on products  (cost=0.29..2982.22 rows=9020 width=104) (actual time=0.012..0.072 rows=50.00 loops=1)
+        Filter: (price < (mrp * 0.5))
+        Index Searches: 1
+        Buffers: shared hit=52
+Planning:
+  Buffers: shared hit=317
+Planning Time: 0.437 ms
+Execution Time: 0.086 ms
+=== R14 run 2 ===
+Limit  (cost=0.29..16.82 rows=50 width=104) (actual time=0.012..0.072 rows=50.00 loops=1)
+  Buffers: shared hit=52
+  ->  Index Scan using idx_products_discount_ratio on products  (cost=0.29..2982.22 rows=9020 width=104) (actual time=0.012..0.070 rows=50.00 loops=1)
+        Filter: (price < (mrp * 0.5))
+        Index Searches: 1
+        Buffers: shared hit=52
+Planning:
+  Buffers: shared hit=317
+Planning Time: 0.422 ms
+Execution Time: 0.083 ms
+=== R14 run 3 ===
+Limit  (cost=0.29..16.82 rows=50 width=104) (actual time=0.012..0.072 rows=50.00 loops=1)
+  Buffers: shared hit=52
+  ->  Index Scan using idx_products_discount_ratio on products  (cost=0.29..2982.22 rows=9020 width=104) (actual time=0.011..0.069 rows=50.00 loops=1)
+        Filter: (price < (mrp * 0.5))
+        Index Searches: 1
+        Buffers: shared hit=52
+Planning:
+  Buffers: shared hit=317
+Planning Time: 0.408 ms
+Execution Time: 0.082 ms
+=== R14 run 4 ===
+Limit  (cost=0.29..16.82 rows=50 width=104) (actual time=0.012..0.085 rows=50.00 loops=1)
+  Buffers: shared hit=52
+  ->  Index Scan using idx_products_discount_ratio on products  (cost=0.29..2982.22 rows=9020 width=104) (actual time=0.012..0.082 rows=50.00 loops=1)
+        Filter: (price < (mrp * 0.5))
+        Index Searches: 1
+        Buffers: shared hit=52
+Planning:
+  Buffers: shared hit=317
+Planning Time: 0.428 ms
+Execution Time: 0.096 ms
+=== R14 run 5 ===
+Limit  (cost=0.29..16.82 rows=50 width=104) (actual time=0.011..0.073 rows=50.00 loops=1)
+  Buffers: shared hit=52
+  ->  Index Scan using idx_products_discount_ratio on products  (cost=0.29..2982.22 rows=9020 width=104) (actual time=0.011..0.071 rows=50.00 loops=1)
+        Filter: (price < (mrp * 0.5))
+        Index Searches: 1
+        Buffers: shared hit=52
+Planning:
+  Buffers: shared hit=317
+Planning Time: 0.404 ms
+Execution Time: 0.083 ms

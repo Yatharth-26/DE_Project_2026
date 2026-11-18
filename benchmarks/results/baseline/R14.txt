@@ -1,45 +1,45 @@
 === R14 run 1 ===
-Limit  (cost=1412.39..1412.51 rows=50 width=104) (actual time=3.733..3.736 rows=50.00 loops=1)
+Limit  (cost=1412.39..1412.51 rows=50 width=104) (actual time=3.699..3.701 rows=50.00 loops=1)
   Buffers: shared hit=478
-  ->  Sort  (cost=1412.39..1434.94 rows=9020 width=104) (actual time=3.732..3.733 rows=50.00 loops=1)
+  ->  Sort  (cost=1412.39..1434.94 rows=9020 width=104) (actual time=3.698..3.699 rows=50.00 loops=1)
         Sort Key: ((price / mrp))
         Sort Method: top-N heapsort  Memory: 36kB
         Buffers: shared hit=478
-        ->  Seq Scan on products  (cost=0.00..1112.75 rows=9020 width=104) (actual time=0.007..3.450 rows=2495.00 loops=1)
+        ->  Seq Scan on products  (cost=0.00..1112.75 rows=9020 width=104) (actual time=0.009..3.414 rows=2495.00 loops=1)
               Filter: (((status)::text = 'ACTIVE'::text) AND (price < (mrp * 0.5)))
               Rows Removed by Filter: 27505
               Buffers: shared hit=475
 Planning:
-  Buffers: shared hit=157
-Planning Time: 0.276 ms
-Execution Time: 3.750 ms
+  Buffers: shared hit=163
+Planning Time: 0.260 ms
+Execution Time: 3.714 ms
 === R14 run 2 ===
-Limit  (cost=1412.39..1412.51 rows=50 width=104) (actual time=3.752..3.754 rows=50.00 loops=1)
+Limit  (cost=1412.39..1412.51 rows=50 width=104) (actual time=3.582..3.585 rows=50.00 loops=1)
   Buffers: shared hit=478
-  ->  Sort  (cost=1412.39..1434.94 rows=9020 width=104) (actual time=3.751..3.752 rows=50.00 loops=1)
+  ->  Sort  (cost=1412.39..1434.94 rows=9020 width=104) (actual time=3.581..3.582 rows=50.00 loops=1)
         Sort Key: ((price / mrp))
         Sort Method: top-N heapsort  Memory: 36kB
         Buffers: shared hit=478
-        ->  Seq Scan on products  (cost=0.00..1112.75 rows=9020 width=104) (actual time=0.007..3.466 rows=2495.00 loops=1)
+        ->  Seq Scan on products  (cost=0.00..1112.75 rows=9020 width=104) (actual time=0.008..3.308 rows=2495.00 loops=1)
               Filter: (((status)::text = 'ACTIVE'::text) AND (price < (mrp * 0.5)))
               Rows Removed by Filter: 27505
               Buffers: shared hit=475
 Planning:
-  Buffers: shared hit=157
-Planning Time: 0.288 ms
-Execution Time: 3.768 ms
+  Buffers: shared hit=163
+Planning Time: 0.226 ms
+Execution Time: 3.597 ms
 === R14 run 3 ===
-Limit  (cost=1412.39..1412.51 rows=50 width=104) (actual time=3.561..3.564 rows=50.00 loops=1)
+Limit  (cost=1412.39..1412.51 rows=50 width=104) (actual time=3.813..3.815 rows=50.00 loops=1)
   Buffers: shared hit=478
-  ->  Sort  (cost=1412.39..1434.94 rows=9020 width=104) (actual time=3.561..3.562 rows=50.00 loops=1)
+  ->  Sort  (cost=1412.39..1434.94 rows=9020 width=104) (actual time=3.812..3.813 rows=50.00 loops=1)
         Sort Key: ((price / mrp))
         Sort Method: top-N heapsort  Memory: 36kB
         Buffers: shared hit=478
-        ->  Seq Scan on products  (cost=0.00..1112.75 rows=9020 width=104) (actual time=0.007..3.292 rows=2495.00 loops=1)
+        ->  Seq Scan on products  (cost=0.00..1112.75 rows=9020 width=104) (actual time=0.008..3.514 rows=2495.00 loops=1)
               Filter: (((status)::text = 'ACTIVE'::text) AND (price < (mrp * 0.5)))
               Rows Removed by Filter: 27505
               Buffers: shared hit=475
 Planning:
-  Buffers: shared hit=157
-Planning Time: 0.265 ms
-Execution Time: 3.578 ms
+  Buffers: shared hit=163
+Planning Time: 0.247 ms
+Execution Time: 3.828 ms
